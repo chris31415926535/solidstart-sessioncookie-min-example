@@ -1,8 +1,8 @@
-# Minimal Example of Using Session Cookies in SolidStart
+# A Minimal(ish?) Example of Using Session Cookies in SolidStart
 
 This is a minimal working example showing how you can use session cookies to store persistent user data with Solid Start.
 
-The code itself is heavily commented, and I hope in conjunction with the data dump below it helps somebody out.
+The code itself is heavily commented and is [available on GitHub](https://github.com/chris31415926535/solidstart-sessioncookie-min-example/), and I hope in conjunction with the data dump below it helps somebody out.
 
 # What are cookies, and why?
 
@@ -59,3 +59,9 @@ To get session cookies to work in SolidStart, you have to put a few different pi
 - Then you access the data inside your component function with `useRouteData()` as usual.
   - E.g.: `const { savedCookieText, allCookieDataJson } = useRouteData<typeof routeData>();`
 - Returned values are `Resource`s and so, as usual, need to be accessed by calling them as functions, e.g. `<p>Hi there {savedCookieText()}</p>`.
+
+### Clearing cookie data
+
+- To clear session cookies, you first create an "empty" cookie without any secret data using `storage.destroySession()`, and then return that empty cookie so the browser can update.
+  1. `const destroyedCookie = await storage.destroySession(session);`
+  2. `return json({ destroyedCookie }, {headers: {"Set-Cookie": destroyedCookie}});`

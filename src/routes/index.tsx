@@ -108,6 +108,26 @@ export default function Home() {
 
   }); // end [, updateCookieText] = createServerAction$
 
+
+  // server action to clear all session cookie data
+  const [, destroyCookie] = createServerAction$(async (_, { request }) => {
+
+    // get our session from the cookie that's passed through request headers 
+    const session = await storage.getSession(request.headers.get("Cookie"));
+
+    // create a new cookie with no secret data in it
+    const destroyedCookie = await storage.destroySession(session);
+
+    // update the browser the use the new cookie without any secret data
+    return json({ destroyedCookie }, {
+      headers: {
+        "Set-Cookie": destroyedCookie
+      }
+    });
+
+  }); // end  const [, destroyCookie] = createServerAction$()
+
+
   // Button handler that gets the user-supplied value from the browser, then sends it to the
   // server to run in our server action.
   const handleCookieUpdateButton = () => {
@@ -144,8 +164,18 @@ export default function Home() {
       </div>
       <hr />
       <div>
+        <button onClick={() => destroyCookie()}>Destroy Session Cookie</button>
+      </div>
+      <hr />
+      <div>
         <h3>Session cookie data in json format:</h3>
         {allCookieDataJson()}
+      </div>
+      <hr />
+      <div>
+        <a href="https://github.com/chris31415926535/solidstart-sessioncookie-min-example" target="_blank">
+          View the source code on GitHub here!
+        </a>
       </div>
 
     </main>)
